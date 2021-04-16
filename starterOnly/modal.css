@@ -68,6 +68,10 @@ img {
   display: none;
 }
 
+.formulaire-alerte {
+  font-size: small;
+}
+
 @media screen and (max-width: 768px) {
   .topnav a {display: none;}
   .topnav a.icon {
@@ -186,6 +190,10 @@ main {
 .modal-body {
   padding: 15px 8%;
   margin: 15px auto;
+}
+
+.modal-success {
+  text-align: center;
 }
 
 label {
