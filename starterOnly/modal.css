@@ -37,6 +37,12 @@ img {
 .header-logo {
     float: left;
 }
+
+.logo {
+  width: auto; 
+  height: auto; 
+}
+
 .main-navbar {
     float: right;
 }
@@ -64,8 +70,25 @@ img {
   border-radius: 15px;
 }
 
+.topnav a:hover ::after {
+  border-top: 2px solid #ffffff;
+  content: "";
+  left: 0;
+  width: 100%;
+  display: block;
+}
+
+.topnav a.active ::after {
+  border-top: 2px solid #ffffff;
+  content: "";
+  left: 0;
+  width: 100%;
+  display: block;
+}
+
 .topnav .icon {
   display: none;
+  color: #ff0000;
 }
 
 .formulaire-alerte {
