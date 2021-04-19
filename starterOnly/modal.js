@@ -7,7 +7,10 @@ function editNav() {
   }
 }
 
+// 
 // DOM Elements
+// 
+
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formData = document.querySelectorAll(".formData");
@@ -34,6 +37,18 @@ const alerteBirthdate = document.getElementById("alerte-birthdate");
 const alerteQuantity = document.getElementById("alerte-quantity");
 const alerteLocation = document.getElementById("alerte-location");
 const alerteConditions = document.getElementById("alerte-conditions");
+const verificationMessages = {
+  charInputSize: "Veuillez entrer 2 caractères ou plus pour le champ !",
+  numberLess100: "Veuillez renseigner un nombre entre 0 et 99 !",
+  inputDate: "Veuillez renseigner une date au format JJ/MM/AAAA!",
+  inputEmail: "Veuillez renseigner une adresse email correcte !",
+  cityToSelect: "Veuillez sélectionner une ville !",
+  conditions: "Vous devez accepter les conditions d'utilisation pour poursuivre !"
+}
+
+// 
+// Modals launching and closing
+// 
 
 // launch modal initial event
 modalBtn.forEach((btn) => btn.addEventListener("click", function () {
@@ -60,6 +75,17 @@ function closeModal(modal) {
   modal.style.display = "none";
 }
 
+// Launch modal success and close modal initial event
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  closeModal(modalInitial);
+  launchModal(modalSuccess);
+});
+
+// 
+// Verification inputs form tools 
+// 
+
 // Variable filled on click of a location button 
 var locationChecked;
 locationBtns.forEach((btn) => btn.addEventListener('click', function() {
@@ -77,13 +103,16 @@ var numberLess100RegExp = /^[0-9]{0,1}[0-9]$/;
 // RegEx to verify date input 
 var dateRegExp = /^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/;
 
+// 
 // Verification inputs on change of their data events
+// 
+
 first.addEventListener('input', function() {
-  verificationInput2Characters(alerteFirst, first)
+  verificationCharInput(alerteFirst, first)
 });
 
 last.addEventListener('input', function() {
-  verificationInput2Characters(alerteLast, last)
+  verificationCharInput(alerteLast, last)
 });
 
 email.addEventListener('input', function() {
@@ -98,54 +127,42 @@ quantity.addEventListener('input', function() {
   verificationInputNumberLess100(alerteQuantity, quantity)
 });
 
+// 
+// Verification inputs on change of their data 
+// 
+
+// Launching error or validation layout
+function alertInput(condition, alerteElement, input, message) {
+  condition ? erreurInput(alerteElement, message, input) : validationInput(alerteElement, input)
+}
 
 // Verification for inputs requiring 2 characters 
-let messageVerificationInput2Characters = "Veuillez entrer 2 caractères ou plus pour le champ !";
-function verificationInput2Characters(alerteElement, input) {
-  if(input.value.substr(1) === '') {
-    var erreur;
-    erreur = messageVerificationInput2Characters;
-    erreurInput(alerteElement, erreur, input)
-  } else {
-    validationInput(alerteElement, input)
-  }
+function verificationCharInput(alerteElement, input) {
+  let condition = input.value.substr(1) === '';
+  alertInput(condition, alerteElement, input, verificationMessages.charInputSize);
 }
 
 // Verification for inputs requiring an email
-let messageVerificationInputEmail = "Veuillez renseigner une adresse email correcte !";
 function verificationInputEmail(alerteElement, input) {
-  if(!emailRegExp.test(input.value)) {
-    var erreur;
-    erreur = messageVerificationInputEmail;
-    erreurInput(alerteElement, erreur, input)
-  } else {
-    validationInput(alerteElement, input)
-  }
+  let condition = !emailRegExp.test(input.value);
+  alertInput(condition, alerteElement, input, verificationMessages.inputEmail);
 }
 
 // Verification for inputs requiring a date
-let messageVerificationInputDate = "Veuillez renseigner une date au format JJ/MM/AAAA!";
 function verificationInputDate(alerteElement, input) {
-  if(!dateRegExp.test(input.value)) {
-    var erreur;
-    erreur = messageVerificationInputDate;
-    erreurInput(alerteElement, erreur, input)
-  } else {
-    validationInput(alerteElement, input)
-  }
+  let condition = !dateRegExp.test(input.value);
+  alertInput(condition, alerteElement, input, verificationMessages.inputDate);
 }
 
 // Verification for inputs requiring a Number between 0 and 99
-let messageVerificationInputNumberLess100 = "Veuillez renseigner un nombre entre 0 et 99 !";
 function verificationInputNumberLess100(alerteElement, input) {
-  if(!numberLess100RegExp.test(input.value)) {
-    var erreur;
-    erreur = messageVerificationInputNumberLess100;
-    erreurInput(alerteElement, erreur, input)
-  } else {
-    validationInput(alerteElement, input)
-  }
+  let condition = !numberLess100RegExp.test(input.value);
+  alertInput(condition, alerteElement, input, verificationMessages.numberLess100);
 }
+
+// 
+// Notifications form
+// 
 
 // Alert notification for wrong input
 function erreurInput(alerteElement, erreur, input) {
@@ -162,42 +179,37 @@ function validationInput(alerteElement, input) {
   input.style.border = 'none';
 }
 
+// 
+// Verification on submission click
+// 
+
 // Verify input elements on submission click event
 submitBtn.addEventListener('click', inputVerificationAll);
 
-// Launch modal success and close modal initial event
-form.addEventListener('submit', function(event) {
-  event.preventDefault();
-  closeModal(modalInitial);
-  launchModal(modalSuccess);
-});
+// Verify all inputs form
+function inputVerificationAll(event) {
+  inputVerification(event, alerteFirst, first, verificationMessages.charInputSize);
+  inputVerification(event, alerteLast, last, verificationMessages.charInputSize);
+  inputVerification(event, alerteEmail, email, verificationMessages.inputEmail);
+  inputVerification(event, alerteBirthdate, birthdate, verificationMessages.inputDate);
+  inputVerification(event, alerteQuantity, quantity, verificationMessages.numberLess100); 
 
+  if(!locationChecked) {
+    event.preventDefault();
+    erreurInput(alerteLocation, verificationMessages.cityToSelect, locationFrame)
+  }
+  
+  if(!conditions.checked) {
+    event.preventDefault();
+    erreurInput(alerteConditions, verificationMessages.conditions, conditionsLabel)
+  }
+}
 
+// Verify an input form
 function inputVerification(event, alerteElement, input, message){
   if(alerteElement.textContent != validationInputMessage){
     event.preventDefault();
     // alert("Veuillez compléter tous les champs.");
     erreurInput(alerteElement, message, input );
   } 
-}
-
-// Verify input elements on submission click
-function inputVerificationAll(event) {
-  inputVerification(event, alerteFirst, first, messageVerificationInput2Characters);
-  inputVerification(event, alerteLast, last, messageVerificationInput2Characters);
-  inputVerification(event, alerteEmail, email, messageVerificationInputEmail);
-  inputVerification(event, alerteBirthdate, birthdate, messageVerificationInputDate);
-  inputVerification(event, alerteQuantity, quantity, messageVerificationInputNumberLess100); 
-
-  if(!locationChecked) {
-    event.preventDefault();
-    var erreur = "Veuillez sélectionner une ville !";
-    erreurInput(alerteLocation, erreur, locationFrame)
-  }
-  
-  if(!conditions.checked) {
-    event.preventDefault();
-    var erreur = "Vous devez accepter les conditions d'utilisation pour poursuivre !";
-    erreurInput(alerteConditions, erreur, conditionsLabel)
-  }
 }
