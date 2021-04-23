@@ -91,6 +91,14 @@ img {
   color: #ff0000;
 }
 
+.topnav .icon:hover ::after{
+  display: none;
+}
+
+.topnav .icon.active ::after{
+  display: none;
+}
+
 .formulaire-alerte {
   font-size: small;
 }
@@ -114,6 +122,7 @@ img {
     float: none;
     display: block;
     text-align: left;
+    width: fit-content;
   }
 }
 
